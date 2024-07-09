@@ -14,7 +14,7 @@ Repositorios utilizados para desarrollar el trabajo:
 */
 
 
-//#include <mpi.h>
+#include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -324,11 +324,16 @@ void mutacion(Cromosoma *pobla){
 }
 
 int main(int argc, char **argv){
+    int rank, size;
     tamaño_poblacion = 50; // Numero de cromoksomas
     numero_iteraciones = 1000; //Numero de iteraciones o generaciones
     
+    MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
 
     //Estas lineas piden ingresar el nombre del archivo para obtener las coordenadas
+    if(rank == 0){
     printf("Ingrese el nombre completo del archivo TSP\n");
     scanf("%s",nombre_archivo); 
     recibir_nombre(nombre_archivo);
@@ -336,7 +341,7 @@ int main(int argc, char **argv){
     //Se inicia el calculo de la distancia euclidiana entre todas las ciudades
     //para que sea mas facil calcular los costos más tarde
     iniciar_matriz_distancia(); 
-
+    
     //Se asigna memoria dinamica a la poblacion de rutas (cromosomas) para acomodar los valores
     poblacion = (Cromosoma *)malloc(tamaño_poblacion*sizeof(Cromosoma));
     
@@ -370,7 +375,13 @@ int main(int argc, char **argv){
     //Llama a la funcion para mostrar el cromosoma con menor costo del viaje(distancia),
     //fitness(mejor valor de aptitud) y el mejor orden de genes(ruta de ciudades)
     mostrar_poblacion(poblacion);
+    }
 
+    //liberamos memoria dinamica asignada para resolver el problema
+    free(matriz_distancia);
+    free(poblacion);
 
+    // Finalizar el entorno MPI
+    MPI_Finalize();
     return 0;//finalizacion del programa principal
 }
