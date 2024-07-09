@@ -331,7 +331,6 @@ int main(int argc, char **argv){
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
-
     //Estas lineas piden ingresar el nombre del archivo para obtener las coordenadas
     if(rank == 0){
     printf("Ingrese el nombre completo del archivo TSP\n");
@@ -381,7 +380,6 @@ int main(int argc, char **argv){
     free(matriz_distancia);
     free(poblacion);
 
-    // Finalizar el entorno MPI
     MPI_Finalize();
     return 0;//finalizacion del programa principal
 }
